@@ -1,0 +1,52 @@
+package com.example.reservation.reservations.availability;
+import com.example.reservation.reservations.ReservationService;
+import jakarta.validation.Valid;
+import org.apache.coyote.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/reservations/availability")
+public class ReservationAvailabilityController {
+
+    private static final Logger log = (Logger) LoggerFactory.getLogger(ReservationAvailabilityController.class);       //Logger
+    private final ReservationAvailabilityService reservationAvailabilityService;
+    public ReservationAvailabilityController(ReservationAvailabilityService reservationAvailabilityService) {this.reservationAvailabilityService = reservationAvailabilityService;}
+
+    @PostMapping("/check")
+    public ResponseEntity<CheckAvailabilityResponse>  checkAvailability (@Valid @RequestBody CheckAvailabilityRequest request) {
+        log.info("Called method checkAvailability: request={}", request);
+        boolean isAvailable = reservationAvailabilityService.isReservationAvailable(request.roomId(), request.startDate(),request.endDate());
+        var message = isAvailable ? "Room available to reservation" : "Room not available to reservation";
+        var status = isAvailable ? AvailabilityStatus.AVAILABLE : AvailabilityStatus.RESERVED;
+        return ResponseEntity.status(200).body(new CheckAvailabilityResponse(message, status));
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
