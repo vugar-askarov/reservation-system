@@ -11,3 +11,4 @@ public class ReservationMapper {
         return new ReservationEntity(reservation.id(), reservation.userId(), reservation.roomId(), reservation.startDate(), reservation.endDate(), reservation.status());
     }//toDomainReservation
 }
+

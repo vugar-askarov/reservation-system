@@ -1,5 +1,4 @@
 package com.example.reservation.reservations;
-
 import com.example.reservation.reservations.availability.ReservationAvailabilityService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -7,14 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 
 @Service
 public class ReservationService {
 
-    private static final Logger log = (Logger) LoggerFactory.getLogger(ReservationService.class);       //Logger
+    private static final Logger log = LoggerFactory.getLogger(ReservationService.class);       //Logger
     private final ReservationRepository repository;
     private final ReservationMapper mapper;
     private final ReservationAvailabilityService reservationAvailabilityService;
@@ -40,8 +38,7 @@ public class ReservationService {
         if (reservation.status() != null){throw new IllegalArgumentException("Status should be empty");}
         if(!reservation.endDate().isAfter(reservation.startDate())) {throw new IllegalArgumentException("Start date must be 1 day earlier than end date");}
 
-//до    var entityToSave = new ReservationEntity(null, reservation.userId(), reservation.roomId(), reservation.startDate(), reservation.endDate(), ReservationStatus.PENDING);
-/*пос*/ var entityToSave = mapper.toEntity(reservation);
+        var entityToSave = mapper.toEntity(reservation);
         entityToSave.setStatus(ReservationStatus.PENDING);
 
         var savedEntity = repository.save(entityToSave);
@@ -50,12 +47,12 @@ public class ReservationService {
 
 
     public Reservation updateReservation(Long id, Reservation reservation) {
+        if(!reservation.endDate().isAfter(reservation.startDate())) {throw new IllegalArgumentException("Start date must be 1 day earlier than end date");}
+        if (reservation.status() != null){throw new IllegalArgumentException("Status should be empty");}
         var reservationEntity = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found reservation by id = " + id));
         if (reservationEntity.getStatus() != ReservationStatus.PENDING){throw new IllegalStateException("Cannot modify reservation: status=" + reservationEntity.getStatus());}
-        if(!reservation.endDate().isAfter(reservation.startDate())) {throw new IllegalArgumentException("Start date must be 1 day earlier than end date");}
 
-//до    var reservationToSave = new ReservationEntity (reservationEntity.getId(), reservation.userId(), reservation.roomId(), reservation.startDate(), reservation.endDate(), ReservationStatus.PENDING);
-/*пос*/ var reservationToSave = mapper.toEntity(reservation);
+        var reservationToSave = mapper.toEntity(reservation);
         reservationToSave.setId(reservationEntity.getId());
         reservationToSave.setStatus(ReservationStatus.PENDING);
 
@@ -65,10 +62,10 @@ public class ReservationService {
 
     @Transactional
     public void cancelReservation(Long id) {
-        var reservation = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found reservation by id = " + id));
-        if(reservation.getStatus().equals(ReservationStatus.APPROVED)){throw new IllegalStateException("Cannot cancel approved reservation. Contact with manager please");}
-        if(reservation.getStatus().equals(ReservationStatus.CANCELED)){throw new IllegalStateException("Cannot cancel the reservation. Reservation was already cancelled");}
-        repository.setStatus(id, ReservationStatus.CANCELED);          //Тут можно было и как в approveReservation сделать: reservation.setStatus(ReservationStatus.CANCELED)
+        var reservationEntity = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found reservation by id = " + id));
+        if(reservationEntity.getStatus().equals(ReservationStatus.APPROVED)){throw new IllegalStateException("Cannot cancel approved reservation. Contact with manager please");}
+        if(reservationEntity.getStatus().equals(ReservationStatus.CANCELED)){throw new IllegalStateException("Cannot cancel the reservation. Reservation was already cancelled");}
+        repository.setStatus(id, ReservationStatus.CANCELED);          //Тут можно было и как в approveReservation сделать: reservationEntity.setStatus(ReservationStatus.CANCELED)
         log.info("Successfully cancelled reservation: id={}", id);
     }//deleteReservation
 

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public class ReservationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private Long id;
     @Column(name = "user_id", nullable = false)
     private Long userId;

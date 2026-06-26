@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/reservations")
 public class ReservationController {
 
-    private static final Logger log = (Logger) LoggerFactory.getLogger(ReservationController.class);
+    private static final Logger log = LoggerFactory.getLogger(ReservationController.class);
     private final ReservationService reservationService;
     public ReservationController(ReservationService reservationService) {this.reservationService = reservationService;}
 

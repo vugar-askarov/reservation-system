@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/reservations/availability")
 public class ReservationAvailabilityController {
 
-    private static final Logger log = (Logger) LoggerFactory.getLogger(ReservationAvailabilityController.class);       //Logger
+    private static final Logger log = LoggerFactory.getLogger(ReservationAvailabilityController.class);
     private final ReservationAvailabilityService reservationAvailabilityService;
     public ReservationAvailabilityController(ReservationAvailabilityService reservationAvailabilityService) {this.reservationAvailabilityService = reservationAvailabilityService;}
 
